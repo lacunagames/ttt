@@ -33,7 +33,8 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  h2 {
+  h1,
+  .h2 {
     font-family: $fontFamily;
     color: #fff;
     margin: 0;

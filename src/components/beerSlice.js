@@ -1,19 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import allBeers from '../beers.json';
+export const fetchBeers = createAsyncThunk('beer/fetchBeers', async () => {
+  const response = await fetch('https://api.punkapi.com/v2/beers');
+  const allBeers = await response.json();
+  return allBeers;
+});
 
 export const slice = createSlice({
   name: 'beer',
   initialState: {
-    allBeers: allBeers,
+    allBeers: [],
+    status: '',
+    error: '',
   },
-  reducers: {
-    setCustomerQuery: (state, action) => {
-      state.data = { ...state.data, ...action.payload };
+  extraReducers: {
+    [fetchBeers.pending]: (state, action) => {
+      state.status = 'loading';
+    },
+    [fetchBeers.fulfilled]: (state, action) => {
+      state.status = 'succeeded';
+      state.allBeers = action.payload;
+    },
+    [fetchBeers.rejected]: (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
     },
   },
 });
-
-export const { setCustomerQuery } = slice.actions;
 
 export default slice.reducer;
